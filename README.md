@@ -16,7 +16,6 @@ git clone https://github.com/kchammanard/UR3-Arm-Manipulation.git
 
 ### Run main python file
 ```bash
-cd UR3-Arm-Manipulation
 python main.py
 ```
 ### Vision Builder
