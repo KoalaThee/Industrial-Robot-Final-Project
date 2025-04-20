@@ -2,6 +2,12 @@ import socket
 import time
 
 class Arm:
+    HOME_X = 0.116
+    HOME_Y = -0.300
+    HOME_Z = 0.08
+    HOME_RX = 2.233
+    HOME_RY = 2.257
+    HOME_RZ = -0.039 
     ip: str = "10.10.0.14"
     port: int = 30003
     client: socket.socket
@@ -19,6 +25,16 @@ class Arm:
 
     def send(self, cmd):
         self.client.send(f"{cmd}\n".encode(encoding="utf-8", errors="ignore"))
+    
+    def home(self):
+        print('Robot start moving to home position')
+        cmd_move = str.encode(f'movel(p[{self.HOME_X},{self.HOME_Y},{self.HOME_Z},{self.HOME_RX},{self.HOME_RY},{self.HOME_RZ}],a=0.5,v=0.5,t=1,r=0)\n')
+        self.client.send(cmd_move)
+        time.sleep(2)
+    
+    def rotate_TCP(self, rz):
+        cmd_move = str.encode(f'movel(p[{self.HOME_X},{self.HOME_Y},{self.HOME_Z},{self.HOME_RX},{self.HOME_RY},{rz}],a=0.5,v=0.5,t=1,r=0)\n')
+        self.client.send(cmd_move)
 
     def movej(self, x, y, z, rx, ry, rz, relative):
         if relative:
@@ -83,12 +99,8 @@ class Arm:
 
 if __name__ == "__main__":
     arm = Arm()
-    arm.movej(
-                x=0.115,
-                y=-0.3,
-                z=0.200,
-                rx=0,
-                ry=3.14,
-                rz=0,
-                relative=False
-            )
+    arm.baannai()
+    time.sleep(1.5)
+    arm.baannoon()
+    time.sleep(1.5)    
+    

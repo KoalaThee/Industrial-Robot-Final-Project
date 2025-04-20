@@ -4,7 +4,7 @@ import ast
 
 class Server:
     HOST: str = socket.gethostbyname(socket.gethostname())
-    PORT: int = 503
+    PORT: int = 2024
     _server: socket.socket
     finished = False
 
@@ -12,6 +12,7 @@ class Server:
         self.HOST = host or self.HOST
         self.PORT = port or self.PORT
         self._server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # self._server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self._server.bind((self.HOST, self.PORT))
 
     def listen(self, func: callable) -> None:
@@ -35,13 +36,13 @@ class Server:
         self._server.close()
 
 if __name__ == "__main__":
-    s = Server(port=3000)
+    s = Server(port=2024)
 
     @s.listen
     def handle_message(msg: str):
 
         # processed_msg = ast.literal_eval(msg)
-
+        print("msg",msg)
         if msg[0] == "[" and msg[-1] == "]":
             processed_msg = [ elm if elm != "" else "None" for elm in msg[1:-1].split(",")]
             # print(processed_msg)
@@ -56,4 +57,4 @@ if __name__ == "__main__":
                     processed_msg[-1] = int(processed_msg[-1]) - 360
                 else:
                     processed_msg[-1] = int(processed_msg[-1])
-            print(processed_msg)
+            print("processes",processed_msg)

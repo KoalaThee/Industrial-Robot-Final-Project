@@ -3,43 +3,39 @@ from conveyor import Conveyor
 from arm import Arm
 from server import Server
 import time
+import math
 
 g_ip = "10.10.0.14"
 g_port = 63352
 
-c_ip = "10.10.0.98"
+# c_ip="10.10.0.98"
+c_ip = "0.0.0.0"
 c_port = 2002
 
 a_ip  = "10.10.0.14"
 a_port  = 30003
 
-conveyor_speed = 40
+conveyor_speed = 20
 
-s_port = 3000
+s_port = 2024
 
 offset = 0.075
 
+gripper = Gripper(g_ip,g_port)
+conveyor = Conveyor(c_ip,c_port)
+arm = Arm(a_ip, a_port)
+s = Server()
+
 def main():
-
-    # initialize
-
-    gripper = Gripper(g_ip,g_port)
-    conveyor = Conveyor(c_ip,c_port)
-    arm = Arm(a_ip, a_port)
-    s = Server(port = s_port)
 
     # connect
     
     gripper.gripper_connect()
-    conveyor.conveyor_connect()
-
-    # run
-
-    conveyor.run_conveyor(conveyor_speed)
-
+    arm.connect()
+    arm.home()
     # go to home position
 
-    xi, yi, zi, rxi, ryi, rzi, reli = arm.baannai()
+    _, _, _, rxi, ryi, rzi, _ = arm.baannai()
     gripper.open()
     time.sleep(1.5)
 
@@ -48,16 +44,22 @@ def main():
         if msg[0] == "[" and msg[-1] == "]":
             processed_msg = [ elm if elm != "" else "None" for elm in msg[1:-1].split(",")]
             processed_msg[0] = processed_msg[0] == 'True'
-
+            print('processed_msg', processed_msg)
             if processed_msg[0]:
-
                 # move to target and clamp
 
-                processed_msg[1] = int(processed_msg[1])
                 x = int(processed_msg[1])/1000 + 0.29279 - offset
-                processed_msg[2] = int(processed_msg[2])
                 y = int(processed_msg[2])/1000 - 0.32984 + 0.015
-            
+                # rzi = int(processed_msg[4])
+                # if rzi:
+                #     if rzi > 180:
+                #         rzi = rzi - 360
+                #         rzi = rzi * math.pi / 180
+                #     else:
+                #         rzi = rzi * math.pi / 180
+                # arm.rotate_TCP(rz=rzi)
+                # time.sleep(0.5)
+                
                 arm.movej(
                     x = x,
                     y = y,
@@ -82,13 +84,17 @@ def main():
 
                 # return to home position
 
-                arm.baannai()
-                time.sleep(2)
-
+                arm.home()
                 gripper.open()
                 time.sleep(0.5)
+
     
 
             
 if __name__ == "__main__":
     main()
+    if input() == "q":
+        conveyor.stop_conveyor()
+
+
+

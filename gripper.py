@@ -1,7 +1,7 @@
 import socket 
 import time
 
-ip = "10.10.0.14"
+ip = "10.10.0.14" 
 port = 63352
 
 class Gripper:
