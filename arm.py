@@ -36,16 +36,16 @@ class Arm:
         cmd_move = str.encode(f'movel(p[{self.HOME_X},{self.HOME_Y},{self.HOME_Z},{self.HOME_RX},{self.HOME_RY},{rz}],a=0.5,v=0.5,t=1,r=0)\n')
         self.client.send(cmd_move)
 
-    def movej(self, x, y, z, rx, ry, rz, relative):
+    def movej(self, x, y, z, rx, ry, rz, relative, t=0):
         if relative:
-            move_cmd = f"movej(pose_add(get_actual_tcp_pose(),p[{x or 0},{y or 0},{z or 0},{rx or 0},{ry or 0},{rz or 0}]),2,4,0,0)"
+            move_cmd = f"movej(pose_add(get_actual_tcp_pose(),p[{x or 0},{y or 0},{z or 0},{rx or 0},{ry or 0},{rz or 0}]),2,4,{t},0)"
         else:
-            move_cmd = f"movej(p[{x or 0},{y or 0},{z or 0},{rx or 0},{ry or 0},{rz or 0}],2,4,0,0)"
+            move_cmd = f"movej(p[{x or 0},{y or 0},{z or 0},{rx or 0},{ry or 0},{rz or 0}],2,4,{t},0)"
         print(f"[ARM] Sending move command: {move_cmd}")
         self.send(move_cmd)
 
-    def movel(self, x, y, z, rx, ry, rz, relative):
-        move_cmd = f"movel(pose_add(get_actual_tcp_pose(),p[{x or 0},{y or 0},{z or 0},{rx or 0},{ry or 0},{rz or 0}]),1,0.25,0,0)\n"
+    def movel(self, x, y, z, rx, ry, rz):
+        move_cmd = f"movel(p[{x or 0},{y or 0},{z or 0},{rx or 0},{ry or 0},{rz or 0}],1,4,0,0)"
         self.send(move_cmd)
 
     def baannai(self): 

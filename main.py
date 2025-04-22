@@ -19,10 +19,10 @@ conveyor_speed = 20
 
 s_port = 2024
 
-offset = 0.075
+offset = 0.2
 
 gripper = Gripper(g_ip,g_port)
-conveyor = Conveyor(c_ip,c_port)
+# conveyor = Conveyor(c_ip,c_port)
 arm = Arm(a_ip, a_port)
 s = Server()
 
@@ -41,60 +41,61 @@ def main():
 
     @s.listen
     def handle_message(msg: str):
-        if msg[0] == "[" and msg[-1] == "]":
-            processed_msg = [ elm if elm != "" else "None" for elm in msg[1:-1].split(",")]
-            processed_msg[0] = processed_msg[0] == 'True'
-            print('processed_msg', processed_msg)
-            if processed_msg[0]:
-                # move to target and clamp
+        msg = msg[1:-2].split(",")
+        # print(msg)
+        processed_msg = [e if e != "" else "None" for e in msg]
+        # print(processed_msg)
+        if processed_msg[0] == 'True':
 
-                x = int(processed_msg[1])/1000 + 0.29279 - offset
-                y = int(processed_msg[2])/1000 - 0.32984 + 0.015
-                # rzi = int(processed_msg[4])
-                # if rzi:
-                #     if rzi > 180:
-                #         rzi = rzi - 360
-                #         rzi = rzi * math.pi / 180
-                #     else:
-                #         rzi = rzi * math.pi / 180
-                # arm.rotate_TCP(rz=rzi)
-                # time.sleep(0.5)
-                
-                arm.movej(
-                    x = x,
-                    y = y,
-                    z = -0.25,
-                    rx=rxi,
-                    ry=ryi,
-                    rz=rzi,
-                    relative=False
-                )
-                time.sleep(1.5)
+                if len(processed_msg) == 5:
+                    x = int(processed_msg[1])/1000 + 0.29279 - offset
+                    y = int(processed_msg[2])/1000 - 0.32984 + 0.015
+                    time.sleep(2)
+                    arm.movej(
+                         x=arm.HOME_X,
+                         y=arm.HOME_Y,
+                         z=arm.HOME_Z,
+                         rx=arm.HOME_RX,
+                         ry= -arm.HOME_RY,
+                         rz=arm.HOME_RZ,
+                         relative=False
+                    )
+                    time.sleep(3)
+                    arm.movel(
+                        x = x,
+                        y = y,
+                        z = -0.225,
+                        rx=rxi,
+                        ry=-ryi,
+                        rz=rzi,
+                        # relative=False
+                    )
+                    time.sleep(1)
 
-                gripper.close()
-                time.sleep(0.5)
-
-                # move to destination and place
-
-                # arm.baannoon()
-                # time.sleep(1)
-
-                # gripper.open()
-                # time.sleep(1)
-
-                # return to home position
-
-                arm.home()
-                gripper.open()
-                time.sleep(0.5)
+                    gripper.close()
+                    time.sleep(1)
+                    arm.movej(
+                         x=arm.HOME_X,
+                         y=arm.HOME_Y,
+                         z=arm.HOME_Z,
+                         rx=3.14,
+                         ry= 0,
+                         rz=0,
+                         relative=False,
+                         t=1
+                    )
+                    time.sleep(1)
+                    arm.home() 
+                    gripper.open()
+                    time.sleep(0.5)
 
     
 
             
 if __name__ == "__main__":
     main()
-    if input() == "q":
-        conveyor.stop_conveyor()
+    # if input() == "q":
+    #     conveyor.stop_conveyor()
 
 
 
