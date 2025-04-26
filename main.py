@@ -34,7 +34,7 @@ def main():
     # go to home position
 
     #receive predefined rotation angle 
-    _, _, _, rxi, ryi, rzi, _ = arm.baannai()
+    _, _, _, rxi, ryi, rzi, _ = arm.test_check()
     gripper.open()
     time.sleep(1.5)
 

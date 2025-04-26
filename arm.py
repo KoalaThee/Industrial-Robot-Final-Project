@@ -48,7 +48,7 @@ class Arm:
         move_cmd = f"movel(p[{x or 0},{y or 0},{z or 0},{rx or 0},{ry or 0},{rz or 0}],1,4,0,0)"
         self.send(move_cmd)
 
-    def baannai(self): 
+    def test_check(self): 
         self.movej( 
             x=0.11665,
             y=-0.30096,
@@ -60,7 +60,7 @@ class Arm:
         )
         return 0.11665,0.32096,-0.05419,2.208,2.239,-0.047,False
     
-    def baannoon(self):
+    def test_test(self):
         self.movej( 
             x=0.11665,
             y=-0.32096,
@@ -99,8 +99,8 @@ class Arm:
 
 if __name__ == "__main__":
     arm = Arm()
-    arm.baannai()
+    arm.test_check()
     time.sleep(1.5)
-    arm.baannoon()
+    arm.test_test()
     time.sleep(1.5)    
     
